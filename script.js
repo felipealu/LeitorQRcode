@@ -4,11 +4,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const outputData = document.getElementById('outputData');
   const context = canvas.getContext('2d');
 
-  // Função para acessar a câmera
+  // função para acessar a câmera
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
     .then(function(stream) {
       video.srcObject = stream;
-      video.setAttribute("playsinline", true); // Para que o vídeo não seja executado em tela cheia no iPhone
+      video.setAttribute("playsinline", true); // para o maldito iphone que sempre ta dando o problema de abrir em tela cheia
       video.play();
       requestAnimationFrame(tick);
     })
