@@ -15,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     .catch(function(err) {
       console.error("Erro ao acessar a câmera: " + err);
     });
-
+//recepção de qrcode 
   function tick() {
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
       canvas.hidden = false;
