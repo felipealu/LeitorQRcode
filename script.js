@@ -3,7 +3,11 @@ document.addEventListener('DOMContentLoaded', function() {
   const canvas = document.getElementById('canvas');
   const outputData = document.getElementById('outputData');
   const context = canvas.getContext('2d');
-  const detectedCodes = []; // Array para armazenar os códigos lidos
+
+  // Arrays para armazenar as informações detectadas
+  const names = [];
+  const identifications = [];
+  const vehicles = [];
 
   // Função para acessar a câmera
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
@@ -28,16 +32,31 @@ document.addEventListener('DOMContentLoaded', function() {
       const code = jsQR(imageData.data, imageData.width, imageData.height);
 
       if (code) {
-        // Verifica se o código já foi lido
-        if (!detectedCodes.includes(code.data)) {
-          detectedCodes.push(code.data); // Armazena o novo código
-          displayDetectedCodes(); // Atualiza a exibição dos códigos
+        try {
+          // Tenta converter os dados do QR code para um objeto JSON
+          const qrData = JSON.parse(code.data);
+
+          // Verifica se as informações já foram armazenadas
+          if (!names.includes(qrData.name) && !identifications.includes(qrData.identification) && !vehicles.includes(qrData.vehicle)) {
+            // Adiciona as novas informações nos arrays
+            names.push(qrData.name);
+            identifications.push(qrData.identification);
+            vehicles.push(qrData.vehicle);
+
+            // Atualiza a interface para mostrar os dados armazenados
+            displayStoredData();
+          } else {
+            outputData.innerText = "Código já lido.";
+          }
+
+          // Desenha o retângulo em volta do QR code
+          drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
+          drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
+          drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
+          drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+        } catch (e) {
+          outputData.innerText = "Formato de QR code inválido.";
         }
-        // Desenha o retângulo em volta do QR code
-        drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
-        drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
-        drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
-        drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
       } else {
         outputData.innerText = "Aponte para um QR code";
       }
@@ -45,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
     requestAnimationFrame(tick);
   }
 
+  // Função para desenhar uma linha
   function drawLine(begin, end, color) {
     context.beginPath();
     context.moveTo(begin.x, begin.y);
@@ -54,13 +74,14 @@ document.addEventListener('DOMContentLoaded', function() {
     context.stroke();
   }
 
-  // Função para exibir os códigos lidos na tela
-  function displayDetectedCodes() {
-    outputData.innerHTML = ''; // Limpa a exibição atual
-    detectedCodes.forEach((code, index) => {
-      const listItem = document.createElement('div');
-      listItem.textContent = `Código ${index + 1}: ${code}`;
-      outputData.appendChild(listItem);
-    });
+  // Função para mostrar os dados armazenados na tela
+  function displayStoredData() {
+    outputData.innerHTML = "<h3>Informações Armazenadas:</h3>";
+    for (let i = 0; i < names.length; i++) {
+      outputData.innerHTML += `<p><strong>Nome:</strong> ${names[i]}</p>`;
+      outputData.innerHTML += `<p><strong>Identificação:</strong> ${identifications[i]}</p>`;
+      outputData.innerHTML += `<p><strong>Veículo/Placa:</strong> ${vehicles[i]}</p>`;
+      outputData.innerHTML += "<hr>";
+    }
   }
 });
