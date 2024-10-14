@@ -3,19 +3,20 @@ document.addEventListener('DOMContentLoaded', function() {
   const canvas = document.getElementById('canvas');
   const outputData = document.getElementById('outputData');
   const context = canvas.getContext('2d');
+  const detectedCodes = []; // Array para armazenar os códigos lidos
 
-  // função para acessar a câmera
+  // Função para acessar a câmera
   navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
     .then(function(stream) {
       video.srcObject = stream;
-      video.setAttribute("playsinline", true); // para o maldito iphone que sempre ta dando o problema de abrir em tela cheia
+      video.setAttribute("playsinline", true); // Para que o vídeo não seja executado em tela cheia no iPhone
       video.play();
       requestAnimationFrame(tick);
     })
     .catch(function(err) {
       console.error("Erro ao acessar a câmera: " + err);
     });
-//recepção de qrcode 
+
   function tick() {
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
       canvas.hidden = false;
@@ -27,7 +28,14 @@ document.addEventListener('DOMContentLoaded', function() {
       const code = jsQR(imageData.data, imageData.width, imageData.height);
 
       if (code) {
-        outputData.innerText = `Código detectado: ${code.data}`;
+        // Verifica se o código já foi lido
+        if (!detectedCodes.includes(code.data)) {
+          detectedCodes.push(code.data); // Armazena o novo código
+          outputData.innerText = `Código detectado: ${code.data}`;
+        } else {
+          outputData.innerText = `Código já lido: ${code.data}`;
+        }
+        // Desenha o retângulo em volta do QR code
         drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
         drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
         drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
