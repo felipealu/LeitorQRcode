@@ -31,9 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Verifica se o código já foi lido
         if (!detectedCodes.includes(code.data)) {
           detectedCodes.push(code.data); // Armazena o novo código
-          outputData.innerText = `Código detectado: ${code.data}`;
-        } else {
-          outputData.innerText = `Código já lido: ${code.data}`;
+          displayDetectedCodes(); // Atualiza a exibição dos códigos
         }
         // Desenha o retângulo em volta do QR code
         drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
@@ -54,5 +52,15 @@ document.addEventListener('DOMContentLoaded', function() {
     context.lineWidth = 4;
     context.strokeStyle = color;
     context.stroke();
+  }
+
+  // Função para exibir os códigos lidos na tela
+  function displayDetectedCodes() {
+    outputData.innerHTML = ''; // Limpa a exibição atual
+    detectedCodes.forEach((code, index) => {
+      const listItem = document.createElement('div');
+      listItem.textContent = `Código ${index + 1}: ${code}`;
+      outputData.appendChild(listItem);
+    });
   }
 });
