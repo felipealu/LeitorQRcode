@@ -1,20 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Teste leitor VMSL</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <h1>Leitor de Cadastro VMSL</h1>
-  <video id="video" width="300" height="300" autoplay></video>
-  <canvas id="canvas" hidden></canvas>
-  <p id="output">Aponte para um QR code</p>
-  <p id="outputData"></p>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-  <script src="script.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Leitor de QR Code com Cadastro</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>Leitor de QR Code e Cadastro</h1>
+    <video id="video" width="200" height="200" autoplay></video>
+    <canvas id="canvas" hidden></canvas>
+    <p id="outputData">Aponte para um QR code</p>
 
-</body>
+    <!-- Formulário de Cadastro -->
+    <div id="cadastro">
+      <h3>Cadastro</h3>
+      <form>
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" /><br /><br />
+
+        <label for="identificacao">Identificação:</label>
+        <input
+          type="text"
+          id="identificacao"
+          name="identificacao"
+        /><br /><br />
+
+        <label for="veiculo">Veículo/Placa:</label>
+        <input type="text" id="veiculo" name="veiculo" /><br /><br />
+
+        <button type="button" id="register">Cadastrar</button>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="script.js"></script>
+  </body>
 </html>
