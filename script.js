@@ -1,23 +1,29 @@
-document.addEventListener('DOMContentLoaded', function() {
-  const video = document.getElementById('video');
-  const canvas = document.getElementById('canvas');
-  const outputData = document.getElementById('outputData');
-  const context = canvas.getContext('2d');
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.getElementById("video");
+  const canvas = document.getElementById("canvas");
+  const outputData = document.getElementById("outputData");
+  const context = canvas.getContext("2d");
 
-  // Arrays para armazenar as informações detectadas
-  const names = [];
-  const identifications = [];
-  const vehicles = [];
+  // Campos do formulário de cadastro
+  const nomeField = document.getElementById("nome");
+  const identificacaoField = document.getElementById("identificacao");
+  const veiculoField = document.getElementById("veiculo");
+
+  // Arrays para armazenar as informações lidas
+  const nomes = [];
+  const identificacoes = [];
+  const veiculos = [];
 
   // Função para acessar a câmera
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } })
-    .then(function(stream) {
+  navigator.mediaDevices
+    .getUserMedia({ video: { facingMode: "environment" } })
+    .then(function (stream) {
       video.srcObject = stream;
       video.setAttribute("playsinline", true); // Para que o vídeo não seja executado em tela cheia no iPhone
       video.play();
       requestAnimationFrame(tick);
     })
-    .catch(function(err) {
+    .catch(function (err) {
       console.error("Erro ao acessar a câmera: " + err);
     });
 
@@ -37,23 +43,48 @@ document.addEventListener('DOMContentLoaded', function() {
           const qrData = JSON.parse(code.data);
 
           // Verifica se as informações já foram armazenadas
-          if (!names.includes(qrData.name) && !identifications.includes(qrData.identification) && !vehicles.includes(qrData.vehicle)) {
-            // Adiciona as novas informações nos arrays
-            names.push(qrData.name);
-            identifications.push(qrData.identification);
-            vehicles.push(qrData.vehicle);
+          if (
+            !nomes.includes(qrData.name) &&
+            !identificacoes.includes(qrData.identification) &&
+            !veiculos.includes(qrData.vehicle)
+          ) {
+            // Armazena os novos dados nos arrays
+            nomes.push(qrData.name);
+            identificacoes.push(qrData.identification);
+            veiculos.push(qrData.vehicle);
 
-            // Atualiza a interface para mostrar os dados armazenados
-            displayStoredData();
+            // Preenche os campos do formulário com os dados do QR code
+            nomeField.value = qrData.name || "";
+            identificacaoField.value = qrData.identification || "";
+            veiculoField.value = qrData.vehicle || "";
+
+            // Atualiza a interface para mostrar os dados lidos
+            outputData.innerText = "Dados preenchidos automaticamente.";
           } else {
             outputData.innerText = "Código já lido.";
           }
 
           // Desenha o retângulo em volta do QR code
-          drawLine(code.location.topLeftCorner, code.location.topRightCorner, "#FF3B58");
-          drawLine(code.location.topRightCorner, code.location.bottomRightCorner, "#FF3B58");
-          drawLine(code.location.bottomRightCorner, code.location.bottomLeftCorner, "#FF3B58");
-          drawLine(code.location.bottomLeftCorner, code.location.topLeftCorner, "#FF3B58");
+          drawLine(
+            code.location.topLeftCorner,
+            code.location.topRightCorner,
+            "#FF3B58"
+          );
+          drawLine(
+            code.location.topRightCorner,
+            code.location.bottomRightCorner,
+            "#FF3B58"
+          );
+          drawLine(
+            code.location.bottomRightCorner,
+            code.location.bottomLeftCorner,
+            "#FF3B58"
+          );
+          drawLine(
+            code.location.bottomLeftCorner,
+            code.location.topLeftCorner,
+            "#FF3B58"
+          );
         } catch (e) {
           outputData.innerText = "Formato de QR code inválido.";
         }
@@ -72,16 +103,5 @@ document.addEventListener('DOMContentLoaded', function() {
     context.lineWidth = 4;
     context.strokeStyle = color;
     context.stroke();
-  }
-
-  // Função para mostrar os dados armazenados na tela
-  function displayStoredData() {
-    outputData.innerHTML = "<h3>Informações Armazenadas:</h3>";
-    for (let i = 0; i < names.length; i++) {
-      outputData.innerHTML += `<p><strong>Nome:</strong> ${names[i]}</p>`;
-      outputData.innerHTML += `<p><strong>Identificação:</strong> ${identifications[i]}</p>`;
-      outputData.innerHTML += `<p><strong>Veículo/Placa:</strong> ${vehicles[i]}</p>`;
-      outputData.innerHTML += "<hr>";
-    }
   }
 });
